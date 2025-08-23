@@ -4,6 +4,8 @@ import {
   WalletClient,
   WERR_REVIEW_ACTIONS
 } from '@bsv/sdk'
+import { error } from 'console'
+import { Script } from 'vm'
 
 export const createTransaction = async (): Promise<void> => {
   try {
@@ -13,10 +15,18 @@ export const createTransaction = async (): Promise<void> => {
     const args: CreateActionArgs = {
       description: 'Create a transaction',
       outputs: [
-       '2102aaa7a5a2e386840889732be8d8264d42198f116903ed9f8f2cc9763c0e9958acac0e4d7920666972737420746f6b656e0849276d204d6174744630440220187800c3732512ef3d3ccdf741966b45f4251f879ac933160837a03d1c98a420022064c4d3fb3c07b12c47aae5baef7890e996ffa680e32fb8aa678c7f06ff0d37bd6d75' // TODO: Define the transaction output with the lockingScript, 5 satoshis, and an output description
+       {
+       lockingScript: lockingScript,
+       satoshis: 5,
+       outputDescription: 'First token output'
+      }
+      // TODO: Define the transaction output with the lockingScript, 5 satoshis, and an output description
       ]
     }
-
+    const createActionArgs: CreateActionResult = await walletClient.createAction(args)
+    if(createActionArgs.tx===undefined) {
+      console.error('The tranction failed', error)
+    }
     // TODO: Call walletClient.createAction with args, log the result, and handle the case where the transaction is undefined
   } catch (error: unknown) {
     if (error instanceof WERR_REVIEW_ACTIONS) {
